@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-trivy-app
+  labels:
+    app: simple-trivy-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-trivy-app
+  template:
+    metadata:
+      labels:
+        app: simple-trivy-app
+    spec:
+      containers:
+        - name: simple-trivy-app
+          image: ghcr.io/OWNER/simple-trivy-app:latest # غيّر OWNER باسمك
+          ports:
+            - containerPort: 3000
