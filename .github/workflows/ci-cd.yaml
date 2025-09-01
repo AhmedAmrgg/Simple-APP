@@ -1,0 +1,54 @@
+# name: CI/CD with Trivy and Kind
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-scan-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # 2. Login DockerHub (Secrets لازم تضيفها في GitHub)
+      - name: DockerHub login
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      # 3. Build Docker image
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/simple-trivy-app:latest .
+
+      # 4. Run Trivy scan
+      - name: Security Scan with Trivy
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/simple-trivy-app:latest
+          severity: CRITICAL,HIGH
+          exit-code: 1
+          ignore-unfixed: true
+          format: table
+
+      # 5. Push to DockerHub
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/simple-trivy-app:latest
+
+      # 6. Install Kind
+      - name: Set up Kind cluster
+        uses: helm/kind-action@v1.8.0
+        with:
+          cluster_name: trivy-kind-cluster
+
+      # 7. Load image into Kind (اختياري لو عايز تستخدم local image)
+      - name: Load image into Kind
+        run: kind load docker-image ${{ secrets.DOCKERHUB_USERNAME }}/simple-trivy-app:latest --name trivy-kind-cluster
+
+      # 8. Deploy to Kind
+      - name: Deploy app to Kind
+        run: |
+          kubectl apply -f deployment.yaml
+          kubectl rollout status deployment/simple-trivy-app
+          kubectl get pods -o wide
+          kubectl get svc
