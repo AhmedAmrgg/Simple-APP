@@ -35,7 +35,7 @@ spec:
     spec:
       containers:
         - name: simple-trivy-app
-          image: simple-trivy-app:1.0
+          image: ahmedamr309/simple-trivy-app:1.0
           ports:
             - containerPort: 3000
 ---
