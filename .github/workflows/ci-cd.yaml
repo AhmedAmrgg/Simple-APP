@@ -52,3 +52,17 @@ jobs:
       #     kubectl rollout status deployment/simple-trivy-app
       #     kubectl get pods -o wide
       #     kubectl get svc
+      - name: Build and Push Docker Image (latest + commit SHA)
+        run: |
+          IMAGE_NAME=myapp
+          SHORT_SHA=${GITHUB_SHA::7}
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:latest \
+                       -t ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$SHORT_SHA \
+                       -t ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$TIMESTAMP .
+          
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$SHORT_SHA
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$TIMESTAMP
+
