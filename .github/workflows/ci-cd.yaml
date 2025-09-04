@@ -65,4 +65,4 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$SHORT_SHA
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$TIMESTAMP
-# 1111
+
