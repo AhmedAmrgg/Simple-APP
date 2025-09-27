@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout code
+      # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -21,36 +21,44 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # Login to Amazon ECR
+      # Login to ECR
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      # Generate SHORT_SHA + TIMESTAMP
+      - name: Set image tags
+        run: |
+          echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+          echo "TIMESTAMP=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
       # Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t my-app:${{ github.sha }} .
+          docker build -t my-app:${{ env.SHORT_SHA }}-${{ env.TIMESTAMP }} .
 
-      # 🔎 Run Trivy Scan
+      # Trivy Scan
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: my-app:${{ github.sha }}
+          image-ref: my-app:${{ env.SHORT_SHA }}-${{ env.TIMESTAMP }}
           format: table
-          exit-code: 1     # fail if vulnerabilities found (set to 0 if you don’t want failure)
+          exit-code: 1
           severity: HIGH,CRITICAL
 
-      # Tag and push only if scan passed
+      # Tag and Push to ECR
       - name: Tag and Push image to ECR
         if: success()
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: my-app
-          IMAGE_TAG: ${{ github.sha }}
         run: |
+          IMAGE_TAG=${{ env.SHORT_SHA }}-${{ env.TIMESTAMP }}
+
+          # Tag with unique timestamp + SHA
           docker tag my-app:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-          # Optional: also push "latest"
+          # Also push latest
           docker tag my-app:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
