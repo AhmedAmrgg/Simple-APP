@@ -1,9 +1,13 @@
 # 🚀 Build, Scan, and Push to Amazon ECR with GitHub Actions
 
 ## 📌 Project Overview
-- This project demonstrates a CI/CD pipeline using GitHub Actions to automate the process of building a Docker image, scanning it for vulnerabilities, and pushing it to Amazon Elastic Container Registry (ECR).
-- It’s designed as a DevOps best-practice project to showcase automation, security scanning, and image versioning in a cloud-native workflow.
-- The GitHub Actions workflow is triggered on every push to the following branches:
+This repository contains a CI/CD pipeline built with GitHub Actions to:
+- **🏗 Build a Docker image**
+- **🔍 Scan it for vulnerabilities using Trivy**
+- **📦 Push the image to Amazon Elastic Container Registry (ECR)**
+
+***This project is part of my DevOps learning journey, showcasing automation, security scanning, and image versioning in a cloud-native workflow.***
+## The GitHub Actions workflow is triggered on every push to the following branches:
 
 - **main**
 - **dev**
