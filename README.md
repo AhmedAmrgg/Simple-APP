@@ -1,46 +1,34 @@
-🚀 Build, Scan, and Push to Amazon ECR with GitHub Actions
+# 🚀 Build, Scan, and Push to Amazon ECR with GitHub Actions
 
-This project demonstrates a CI/CD pipeline using GitHub Actions to automate the process of building a Docker image, scanning it for vulnerabilities, and pushing it to Amazon Elastic Container Registry (ECR).
+## 📌 Project Overview
+- This project demonstrates a CI/CD pipeline using GitHub Actions to automate the process of building a Docker image, scanning it for vulnerabilities, and pushing it to Amazon Elastic Container Registry (ECR).
+- It’s designed as a DevOps best-practice project to showcase automation, security scanning, and image versioning in a cloud-native workflow.
+- The GitHub Actions workflow is triggered on every push to the following branches:
 
-It’s designed as a DevOps best-practice project to showcase automation, security scanning, and image versioning in a cloud-native workflow.
+- **main**
+- **dev**
+- **prod**
 
-📌 Workflow Overview
+## 🔄 Key Stages
+- Checkout repository – Pulls the source code.
+- Configure AWS credentials – Authenticates with AWS using GitHub secrets.
+- Login to Amazon ECR – Gets credentials to push Docker images.
+- Generate image tags – Creates tags based on:
 
-The GitHub Actions workflow is triggered on every push to the following branches:
+## Branch name
+- GitHub commit SHA (short)
+- Timestamp
+- Build Docker image – Builds the image with a unique tag.
 
-main
+**Trivy Scan**  Scans the Docker image for vulnerabilities (HIGH, CRITICAL).
 
-dev
+## Push to ECR – Pushes two tags:
 
-prod
+- branch-SHA-timestamp
 
-🔄 Key Stages
-
-Checkout repository – Pulls the source code.
-
-Configure AWS credentials – Authenticates with AWS using GitHub secrets.
-
-Login to Amazon ECR – Gets credentials to push Docker images.
-
-Generate image tags – Creates tags based on:
-
-Branch name
-
-GitHub commit SHA (short)
-
-Timestamp
-
-Build Docker image – Builds the image with a unique tag.
-
-Trivy Scan – Scans the Docker image for vulnerabilities (HIGH, CRITICAL).
-
-Push to ECR – Pushes two tags:
-
-branch-SHA-timestamp
-
-branch-latest
-
-📂 Project Structure
+- branch-latest
+```
+## 📂 Project Structure
 
 .
 ├── .github/
@@ -51,36 +39,27 @@ branch-latest
 │   ├── app.py                    # Example application file
 │   └── requirements.txt          # Dependencies list
 ├── README.md                     # Project documentation
+```
+## 🔎 Explanation
 
-🔎 Explanation
+- **.github/workflows/** → Contains the GitHub Actions pipeline.
+- **Dockerfile** → Defines how to build the Docker image for the app.
+- **src/** → Application source code and dependencies.
+- **README.md** → Documentation for the project.
 
-.github/workflows/ → Contains the GitHub Actions pipeline.
+## ⚙️ Example Image Tags
+- For a commit pushed to the dev branch:
+- dev-a1b2c3d-20250928130045
+- dev-latest
 
-Dockerfile → Defines how to build the Docker image for the app.
+## 🔐 Required Secrets
+- Add the following secrets in your GitHub repository (Settings > Secrets and variables > Actions):
+- **AWS_ACCESS_KEY_ID**
+- **AWS_SECRET_ACCESS_KEY**
 
-src/ → Application source code and dependencies.
-
-README.md → Documentation for the project.
-
-⚙️ Example Image Tags
-
-For a commit pushed to the dev branch:
-
-dev-a1b2c3d-20250928130045
-
-dev-latest
-
-🔐 Required Secrets
-
-Add the following secrets in your GitHub repository (Settings > Secrets and variables > Actions):
-
-AWS_ACCESS_KEY_ID
-
-AWS_SECRET_ACCESS_KEY
-
-📂 Workflow File Example
-
-.github/workflows/build-scan-push.yml
+## 📂 Workflow File Example
+```
+- .github/workflows/build-scan-push.yml
 
 name: Build, Scan, and Push to ECR
 
@@ -129,8 +108,8 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker tag my-app:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.BRANCH }}-latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.BRANCH }}-latest
-
-🛡 Features & Best Practices
+```
+## 🛡 Features & Best Practices
 
 ✅ Automated Docker builds per branch
 
@@ -142,30 +121,19 @@ jobs:
 
 ✅ Uses GitHub secrets for AWS credentials
 
-🚀 How to Use
+## 🚀 How to Use
+- Fork this repository or copy the workflow into your project.
+- Create an Amazon ECR repository (e.g., my-app).
+- Add your AWS credentials to GitHub secrets.
+- Push code to main, dev, or prod branches.
+- The pipeline will automatically build, scan, and push your image.
 
-Fork this repository or copy the workflow into your project.
+## 📊 Example Run
+- Push code to dev branch.
+- GitHub Actions builds Docker image.
+- Trivy scans vulnerabilities.
+- Image is pushed to Amazon ECR as:
+- dev-<short_sha>-<timestamp>
+- dev-latest
 
-Create an Amazon ECR repository (e.g., my-app).
-
-Add your AWS credentials to GitHub secrets.
-
-Push code to main, dev, or prod branches.
-
-The pipeline will automatically build, scan, and push your image.
-
-📊 Example Run
-
-Push code to dev branch.
-
-GitHub Actions builds Docker image.
-
-Trivy scans vulnerabilities.
-
-Image is pushed to Amazon ECR as:
-
-dev-<short_sha>-<timestamp>
-
-dev-latest
-
-⚡ This project is a hands-on DevOps practice for CI/CD, Docker, AWS ECR, and Security Scanning.
+# ⚡ This project is a hands-on DevOps practice for CI/CD, Docker, AWS ECR, and Security Scanning.
