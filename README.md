@@ -9,7 +9,6 @@ This repository contains a CI/CD pipeline built with GitHub Actions to:
 ***This project is part of my DevOps learning journey, showcasing automation, security scanning, and image versioning in a cloud-native workflow.***
 ## The GitHub Actions workflow is triggered on every push to the following branches:
 
-- **main**
 - **dev**
 - **prod**
 
@@ -17,12 +16,12 @@ This repository contains a CI/CD pipeline built with GitHub Actions to:
 - Checkout repository – Pulls the source code.
 - Configure AWS credentials – Authenticates with AWS using GitHub secrets.
 - Login to Amazon ECR – Gets credentials to push Docker images.
-- Generate image tags – Creates tags based on:
 
-## Branch name
+## Generate image tags – Creates tags based on:
+- Branch name
 - GitHub commit SHA (short)
 - Timestamp
-- Build Docker image – Builds the image with a unique tag.
+ #### Build Docker image – Builds the image with a unique tag.
 
 **Trivy Scan**  Scans the Docker image for vulnerabilities (HIGH, CRITICAL).
 
@@ -40,8 +39,8 @@ This repository contains a CI/CD pipeline built with GitHub Actions to:
 │       └── build-scan-push.yml   # GitHub Actions workflow (build, scan, push to ECR)
 ├── Dockerfile                    # Docker build instructions
 ├── src/                          # Application source code
-│   ├── app.py                    # Example application file
-│   └── requirements.txt          # Dependencies list
+│   ├── server.js                    # Example application file
+│   └── package.json          # Dependencies list
 ├── README.md                     # Project documentation
 ```
 ## 🔎 Explanation
@@ -63,13 +62,13 @@ This repository contains a CI/CD pipeline built with GitHub Actions to:
 
 ## 📂 Workflow File Example
 ```
-- .github/workflows/build-scan-push.yml
+- .github/workflows/deploy.yml
 
 name: Build, Scan, and Push to ECR
 
 on:
   push:
-    branches: [ "main", "dev", "prod" ]
+    branches: [ "dev", "prod" ]
 
 jobs:
   build-scan-push:
@@ -129,7 +128,7 @@ jobs:
 - Fork this repository or copy the workflow into your project.
 - Create an Amazon ECR repository (e.g., my-app).
 - Add your AWS credentials to GitHub secrets.
-- Push code to main, dev, or prod branches.
+- Push code to  dev, or prod branches.
 - The pipeline will automatically build, scan, and push your image.
 
 ## 📊 Example Run
