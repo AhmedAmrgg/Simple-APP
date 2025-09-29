@@ -139,4 +139,4 @@ jobs:
 - dev-<short_sha>-<timestamp>
 - dev-latest
 
-# ⚡ This project is a hands-on DevOps practice for CI/CD, Docker, AWS ECR, and Security Scanning.
+ ⚡ This project is a hands-on DevOps practice for CI/CD, Docker, AWS ECR, and Security Scanning.
